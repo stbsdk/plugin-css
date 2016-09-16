@@ -10,7 +10,7 @@ var path     = require('path'),
     config   = require('spa-plugin/config'),
     pkgData  = require(path.join(process.cwd(), 'package.json')),
     profiles = {},
-    modules  = ['stb-app', 'stb-component'];
+    modules  = ['stb-app'/*, 'stb-component'*/];
 
 
 function preparePaths ( name ) {
