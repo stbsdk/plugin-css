@@ -18,7 +18,7 @@ function preparePaths ( name ) {
         return path.join(path.dirname(require.resolve(moduleName)), 'css', name + '.css');
     });
 
-    paths.push(path.join(config.source, 'css', name + '.css'));
+    //paths.push(path.join(config.source, 'css', name + '.css'));
 
     return paths;
 }
@@ -41,7 +41,7 @@ Object.keys(pkgData.dependencies || {}).concat(Object.keys(pkgData.devDependenci
         source: preparePaths(fileName),
 
         // intended output file
-        target: path.join(config.target, 'css', fileName + '.css')
+        target: path.join(config.target, 'css', 'release.sdk.' + resolution + '.css')
     });
 });
 
@@ -55,7 +55,7 @@ Object.keys(pkgData.dependencies || {}).concat(Object.keys(pkgData.devDependenci
         source: preparePaths(fileName),
 
         // intended output file
-        target: path.join(config.target, 'css', fileName + '.css')
+        target: path.join(config.target, 'css', 'develop.sdk.' + resolution + '.css')
     });
 });
 
