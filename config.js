@@ -25,7 +25,8 @@ function preparePaths ( name ) {
 
 
 Object.keys(pkgData.dependencies || {}).concat(Object.keys(pkgData.devDependencies || {})).forEach(function ( name ) {
-    if ( name.indexOf('stb-component-') === 0 ) {
+    //if ( name.indexOf('stb-component-') === 0 ) {
+    if ( name.indexOf('-component-') !== -1 ) {
         modules.push(name);
     }
 });
