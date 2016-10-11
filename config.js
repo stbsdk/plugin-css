@@ -5,7 +5,8 @@
 
 'use strict';
 
-var path     = require('path'),
+var fs       = require('fs'),
+    path     = require('path'),
     extend   = require('extend'),
     config   = require('spa-plugin/config'),
     pkgData  = require(path.join(process.cwd(), 'package.json')),
@@ -13,14 +14,20 @@ var path     = require('path'),
     modules  = ['stb-app'/*, 'stb-component'*/];
 
 
-function preparePaths ( name ) {
-    var paths = modules.map(function ( moduleName ) {
-        return path.join(path.dirname(require.resolve(moduleName)), 'css', name + '.css');
+function preparePaths ( mode, resolution ) {
+    var name = mode + '.' + resolution;
+
+    return modules.map(function ( moduleName ) {
+        // default resolution-dependent file
+        var fileName = path.join(path.dirname(require.resolve(moduleName)), 'css', name + '.css');
+
+        if ( !fs.existsSync(fileName) ) {
+            // resolution-independent fallback
+            fileName = path.join(path.dirname(require.resolve(moduleName)), 'css', mode + '.css');
+        }
+
+        return fileName;
     });
-
-    //paths.push(path.join(config.source, 'css', name + '.css'));
-
-    return paths;
 }
 
 
@@ -32,33 +39,18 @@ Object.keys(pkgData.dependencies || {}).concat(Object.keys(pkgData.devDependenci
 });
 
 
-// release
-[480, 576, 720, 1080].forEach(function ( resolution ) {
-    var taskName = 'release:' + resolution,
-        fileName = 'release.' + resolution;
+['release', 'develop'].forEach(function ( mode ) {
+    [480, 576, 720, 1080].forEach(function ( resolution ) {
+        profiles[mode + ':' + resolution] = extend(true, {}, config, {
+            // main entry point
+            source: preparePaths(mode, resolution),
 
-    profiles[taskName] = extend(true, {}, config, {
-        // main entry point
-        source: preparePaths(fileName),
-
-        // intended output file
-        target: path.join(config.target, 'css', 'release.sdk.' + resolution + '.css')
+            // intended output file
+            target: path.join(config.target, 'css', mode + '.sdk.' + resolution + '.css')
+        });
     });
 });
 
-// develop
-[480, 576, 720, 1080].forEach(function ( resolution ) {
-    var taskName = 'develop:' + resolution,
-        fileName = 'develop.' + resolution;
-
-    profiles[taskName] = extend(true, {}, config, {
-        // main entry point
-        source: preparePaths(fileName),
-
-        // intended output file
-        target: path.join(config.target, 'css', 'develop.sdk.' + resolution + '.css')
-    });
-});
 
 // watch all source files
 Object.keys(profiles).forEach(function ( name ) {
