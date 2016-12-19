@@ -9,9 +9,11 @@ var fs       = require('fs'),
     path     = require('path'),
     extend   = require('extend'),
     config   = require('spa-plugin/config'),
-    pkgData  = require(path.join(process.cwd(), 'package.json')),
+    cwd      = process.cwd(),
+    pkgData  = require(path.join(cwd, 'package.json')),
     profiles = {},
-    modules  = ['stb-app'/*, 'stb-component'*/];
+    modules  = ['stb-app'/*, 'stb-component'*/],
+    nmPath   = path.join(cwd, 'node_modules');
 
 
 function preparePaths ( mode, resolution ) {
@@ -19,12 +21,13 @@ function preparePaths ( mode, resolution ) {
 
     return modules.map(function ( moduleName ) {
         // default resolution-dependent file
-
-        var fileName = path.join(process.cwd(), 'node_modules', moduleName, 'css', name + '.css');
+        //var fileName = path.join(path.dirname(require.resolve(moduleName)), 'css', name + '.css');
+        var fileName = path.join(nmPath, moduleName, 'css', name + '.css');
 
         if ( !fs.existsSync(fileName) ) {
             // resolution-independent fallback
-            fileName = path.join(process.cwd(), 'node_modules', moduleName, 'css', mode + '.css');
+            //fileName = path.join(path.dirname(require.resolve(moduleName)), 'css', mode + '.css');
+            fileName = path.join(nmPath, moduleName, 'css', mode + '.css');
         }
 
         return fileName;
